@@ -1,6 +1,6 @@
 # DuckChat-Gateway
 
-> Version: Gaga体验版
+> Version: Gaga抢先版
 >
 > Duckchat主程序下载地址：https://github.com/duckchat/gaga
 >
