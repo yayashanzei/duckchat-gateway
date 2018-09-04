@@ -76,6 +76,10 @@ func (app *serverHandler) serve(conn gatewayConnHelper) {
 	conn.setSocketId(socketId)
 	connMapSet(socketId, conn)
 
+	defer func() {
+		conn.close()
+	}()
+
 	for {
 		message, err := conn.readMessage()
 

@@ -40,6 +40,6 @@ func main() {
 	server.SetLoggerLevel()
 
 	go server.StartHttpServer()
-	server.StartWebsocketServer()
-	//	server.StartZalyServer()
+	go server.StartWebsocketServer()
+	server.StartZalyServer()
 }

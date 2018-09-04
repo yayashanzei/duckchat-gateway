@@ -108,5 +108,7 @@ func StartWebsocketServer() {
 	if nil != err {
 		logger.Debugf("error_start_websocket_server: %s", err)
 		return
+	} else {
+		logger.Infof("start_websocket_server suucess")
 	}
 }

@@ -4,10 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+	"sync"
 
-	"github.com/duckchat/duckchat-gateway/proto/core"
 	"github.com/duckchat/duckchat-gateway/protocol"
-	"github.com/golang/protobuf/proto"
 )
 
 var connDB map[string]net.Conn = make(map[string]net.Conn)
@@ -18,6 +17,8 @@ func StartZalyServer() {
 		// handle error
 		fmt.Println(err)
 		return
+	} else {
+		logger.Infof("start_zaly_server suucess %s", ZalyServerAddr)
 	}
 
 	for {
@@ -27,53 +28,80 @@ func StartZalyServer() {
 			return
 		}
 
-		go handleZalyRequest(conn)
+		logger.Debugf("new zaly connection")
+
+		var gatewayConn = &gatewayConnZaly{}
+		gatewayConn.conn = conn
+		gatewayConn.reader = bufio.NewReader(conn)
+
+		defer func() {
+			//			gatewayConn.close()
+			//			logger.Debugf("zaly connClosed %s", request.RemoteAddr)
+		}()
+
+		go handlerInstance.serve(gatewayConn)
 	}
 }
 
-func handleZalyRequest(conn net.Conn) {
+//
+// implement gatewayConnHelper
+//
 
-	var socketId = ""
+type gatewayConnZaly struct {
+	gatewayConn
 
+	conn      net.Conn
+	reader    *bufio.Reader
+	writeLock sync.Mutex
+	readLock  sync.Mutex
+}
+
+func (conn *gatewayConnZaly) addr() string {
+	return conn.conn.LocalAddr().String()
+}
+
+func (conn *gatewayConnZaly) writeMessage(content []byte) error {
+	//	var writeError error
+	conn.writeLock.Lock()
 	defer func() {
-		delete(connDB, socketId)
-		conn.Close()
+		conn.writeLock.Unlock()
 	}()
 
-	// parse
-	reader := bufio.NewReader(conn)
-	for {
-		message, _ := protocol.UnpackFromReader(reader)
-		commands, _ := message.Strings()
-		val := commands[1]
-		if len(val) <= 0 {
-			fmt.Println("too small values")
-			return
-		}
-		td := &core.TransportData{}
-		_ = proto.Unmarshal([]byte(val), td)
-		sessionid := td.Header[string(core.TransportDataHeaderKey_HeaderSessionid)]
+	bodyInZaly, _ := protocol.PackCommand("0.0", string(content))
+	conn.conn.Write(bodyInZaly)
+	return nil
+}
 
-		socketId = sessionid
-		connDB[socketId] = conn
+func (conn *gatewayConnZaly) close() {
+	conn.conn.Close()
+}
 
-		fmt.Println(sessionid)
+func (conn *gatewayConnZaly) remoteAddr() string {
+	return conn.conn.RemoteAddr().String()
+}
 
-		// to http-backend
-		postBody, _ := proto.Marshal(td)
+func (conn *gatewayConnZaly) bodyFormat() string {
+	return "pb"
+}
 
-		bodyData, keepSocket, _ := requestHttpBackend(td.Action, "pb", postBody)
+func (conn *gatewayConnZaly) readMessage() ([]byte, error) {
+	conn.readLock.Lock()
+	defer func() {
+		conn.readLock.Unlock()
+	}()
 
-		// 处理is_api_request
-		fmt.Println("keepSocket", keepSocket)
-
-		bodyInZaly, _ := protocol.PackCommand("1", string(bodyData))
-
-		len, err := conn.Write(bodyInZaly)
-		fmt.Println(len, err)
-
-		if false == keepSocket {
-			return
-		}
+	message, err := protocol.UnpackFromReader(conn.reader)
+	if err != nil {
+		logger.Warning(message, err)
+		return nil, err
 	}
+
+	commands, _ := message.Strings()
+	val := commands[1]
+	if len(val) <= 0 {
+		fmt.Println("too small values")
+		return nil, err
+	}
+
+	return []byte(val), nil
 }
