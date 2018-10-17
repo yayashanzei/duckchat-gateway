@@ -104,7 +104,14 @@ func StartWebsocketServer() {
 
 	handler := &wsGWHandler{}
 
-	err := http.ListenAndServe(WebsocketServerAddr, handler)
+	var err error
+
+	if WebsocketServerSslCertFile != "" || WebsocketServerSslKeyFile != "" {
+		err = http.ListenAndServeTLS(WebsocketServerAddr, WebsocketServerSslCertFile, WebsocketServerSslKeyFile, handler)
+	} else {
+		err = http.ListenAndServe(WebsocketServerAddr, handler)
+	}
+
 	if nil != err {
 		logger.Debugf("error_start_websocket_server: %s", err)
 		return

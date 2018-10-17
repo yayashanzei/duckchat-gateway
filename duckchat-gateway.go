@@ -12,21 +12,35 @@ func main() {
 		&server.HttpBackendAddr,
 		"httpBackend",
 		server.HttpBackendAddr,
-		"the http backend server http://ip:port, default: http://127.0.0.1:8888/",
+		"the http backend server http://ip:port",
 	)
 
 	flag.StringVar(
 		&server.WebsocketServerAddr,
 		"websocket",
 		server.WebsocketServerAddr,
-		"the websocket server listen address [ip]:port, default: 2031:",
+		"the websocket server listen address [ip]:port",
+	)
+
+	flag.StringVar(
+		&server.WebsocketServerSslCertFile,
+		"websocketSslCertFile",
+		server.WebsocketServerSslCertFile,
+		"if not empty, websocket-ssl will be enabled. Format: pem",
+	)
+
+	flag.StringVar(
+		&server.WebsocketServerSslKeyFile,
+		"websocketSslKeyFile",
+		server.WebsocketServerSslKeyFile,
+		"if not empty, websocket-ssl will be enabled. Format: pem",
 	)
 
 	flag.StringVar(
 		&server.ZalyServerAddr,
 		"zaly",
 		server.ZalyServerAddr,
-		"the http backend server ip:port, default: :2021",
+		"the http backend server ip:port",
 	)
 
 	flag.BoolVar(

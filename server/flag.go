@@ -17,6 +17,10 @@ var WebsocketServerAddr string = ":2031"
 var HttpBackendAddr string = "http://127.0.0.1:8888/"
 var EnableDebug bool = false
 
+//TLS Config
+var WebsocketServerSslCertFile string = ""
+var WebsocketServerSslKeyFile string = ""
+
 var logger *elog.Logger
 
 func requestHttpBackend(action string, bodyFormat string, data []byte) ([]byte, bool, error) {
