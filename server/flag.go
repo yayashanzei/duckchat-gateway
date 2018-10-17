@@ -18,6 +18,7 @@ var HttpBackendAddr string = "http://127.0.0.1:8888/"
 var EnableDebug bool = false
 
 //TLS Config
+var WebsocketServerSsl string = ""
 var WebsocketServerSslCertFile string = ""
 var WebsocketServerSslKeyFile string = ""
 

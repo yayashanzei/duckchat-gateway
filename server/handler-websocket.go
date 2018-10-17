@@ -1,6 +1,8 @@
 package server
 
 import (
+	"crypto/tls"
+	"net"
 	"net/http"
 	"sync"
 
@@ -104,18 +106,44 @@ func StartWebsocketServer() {
 
 	handler := &wsGWHandler{}
 
-	var err error
+	if WebsocketServerSsl != "" && WebsocketServerSsl != "0" {
 
-	if WebsocketServerSslCertFile != "" || WebsocketServerSslKeyFile != "" {
-		err = http.ListenAndServeTLS(WebsocketServerAddr, WebsocketServerSslCertFile, WebsocketServerSslKeyFile, handler)
-	} else {
-		err = http.ListenAndServe(WebsocketServerAddr, handler)
+		cert, err := tls.LoadX509KeyPair(WebsocketServerSslCertFile, WebsocketServerSslKeyFile)
+		if nil != err {
+			logger.Fatalf("start_websocket_ssl_server failed LoadX509KeyPair %s", err)
+			return
+		}
+
+		host, _, errSplit := net.SplitHostPort(WebsocketServerSsl)
+		if nil != err {
+			logger.Fatalf("start_websocket_ssl_server failed Invalid WebsocketServerSsl %s", errSplit)
+			return
+		}
+
+		var tlsConfig = &tls.Config{
+			ServerName:   host,
+			Certificates: []tls.Certificate{cert},
+		}
+
+		l, errListen := tls.Listen("tcp", WebsocketServerSsl, tlsConfig)
+		if nil != errListen {
+			logger.Fatalf("start_websocket_ssl_server failed  %s", errSplit)
+			return
+		}
+
+		go http.Serve(l, handler)
+		logger.Infof("start_websocket_ssl_server success")
 	}
 
-	if nil != err {
-		logger.Debugf("error_start_websocket_server: %s", err)
-		return
-	} else {
-		logger.Infof("start_websocket_server suucess")
+	if WebsocketServerAddr != "0" {
+
+		l, errListen := net.Listen("tcp", WebsocketServerSsl)
+		if nil != errListen {
+			logger.Fatalf("start_websocket_server failed  %s", errListen)
+			return
+		}
+
+		go http.Serve(l, handler)
+		logger.Infof("start_websocket_server success")
 	}
 }

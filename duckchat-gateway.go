@@ -19,21 +19,28 @@ func main() {
 		&server.WebsocketServerAddr,
 		"websocket",
 		server.WebsocketServerAddr,
-		"the websocket server listen address [ip]:port",
+		"the websocket server listen address, format: [ip]:port  .  set 0 to disabled.",
+	)
+
+	flag.StringVar(
+		&server.WebsocketServerSsl,
+		"websocketServerSsl",
+		server.WebsocketServerSsl,
+		"if not empty, websocket-ssl will be enabled. ip:port, ex: 127.0.0.1:2031, :2031",
 	)
 
 	flag.StringVar(
 		&server.WebsocketServerSslCertFile,
 		"websocketSslCertFile",
 		server.WebsocketServerSslCertFile,
-		"if not empty, websocket-ssl will be enabled. Format: pem",
+		"Format: pem",
 	)
 
 	flag.StringVar(
 		&server.WebsocketServerSslKeyFile,
 		"websocketSslKeyFile",
 		server.WebsocketServerSslKeyFile,
-		"if not empty, websocket-ssl will be enabled. Format: pem",
+		"Format: pem",
 	)
 
 	flag.StringVar(
