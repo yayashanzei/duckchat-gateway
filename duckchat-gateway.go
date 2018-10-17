@@ -62,5 +62,8 @@ func main() {
 
 	go server.StartHttpServer()
 	go server.StartWebsocketServer()
-	server.StartZalyServer()
+	go server.StartZalyServer()
+
+	var c chan int
+	<-c
 }

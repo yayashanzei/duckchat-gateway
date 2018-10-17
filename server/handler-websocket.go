@@ -114,36 +114,29 @@ func StartWebsocketServer() {
 			return
 		}
 
-		host, _, errSplit := net.SplitHostPort(WebsocketServerSsl)
-		if nil != err {
-			logger.Fatalf("start_websocket_ssl_server failed Invalid WebsocketServerSsl %s", errSplit)
-			return
-		}
-
 		var tlsConfig = &tls.Config{
-			ServerName:   host,
 			Certificates: []tls.Certificate{cert},
 		}
 
 		l, errListen := tls.Listen("tcp", WebsocketServerSsl, tlsConfig)
 		if nil != errListen {
-			logger.Fatalf("start_websocket_ssl_server failed  %s", errSplit)
+			logger.Fatalf("start_websocket_ssl_server failed  %s", errListen)
 			return
 		}
 
 		go http.Serve(l, handler)
-		logger.Infof("start_websocket_ssl_server success")
+		logger.Infof("start_websocket_ssl_server success %s", WebsocketServerSsl)
 	}
 
 	if WebsocketServerAddr != "0" {
 
-		l, errListen := net.Listen("tcp", WebsocketServerSsl)
+		l, errListen := net.Listen("tcp", WebsocketServerAddr)
 		if nil != errListen {
 			logger.Fatalf("start_websocket_server failed  %s", errListen)
 			return
 		}
 
 		go http.Serve(l, handler)
-		logger.Infof("start_websocket_server success")
+		logger.Infof("start_websocket_server success %s", WebsocketServerAddr)
 	}
 }
