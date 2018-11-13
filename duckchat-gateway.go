@@ -43,13 +43,6 @@ func main() {
 		"Format: pem",
 	)
 
-	flag.StringVar(
-		&server.ZalyServerAddr,
-		"zaly",
-		server.ZalyServerAddr,
-		"the http backend server ip:port",
-	)
-
 	flag.BoolVar(
 		&server.EnableDebug,
 		"debug",
@@ -62,7 +55,6 @@ func main() {
 
 	go server.StartHttpServer()
 	go server.StartWebsocketServer()
-	go server.StartZalyServer()
 
 	var c chan int
 	<-c
