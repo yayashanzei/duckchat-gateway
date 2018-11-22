@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -89,6 +90,7 @@ func (conn *gatewayConnWebsocket) readMessage() ([]byte, error) {
 		conn.readLock.Unlock()
 	}()
 
+	conn.ws.SetReadDeadline(time.Now().Add(20 * time.Second))
 	_, message, err := conn.ws.ReadMessage()
 	if err != nil {
 		return nil, err
