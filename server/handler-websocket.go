@@ -90,7 +90,7 @@ func (conn *gatewayConnWebsocket) readMessage() ([]byte, error) {
 		conn.readLock.Unlock()
 	}()
 
-	conn.ws.SetReadDeadline(time.Now().Add(20 * time.Second))
+	conn.ws.SetReadDeadline(time.Now().Add(30 * time.Second))
 	_, message, err := conn.ws.ReadMessage()
 	if err != nil {
 		return nil, err
