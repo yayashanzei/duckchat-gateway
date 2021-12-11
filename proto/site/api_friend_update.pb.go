@@ -6,7 +6,7 @@ package site // import "github.com/duckchat/duckchat-gateway/proto/site"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import core "github.com/duckchat/duckchat-gateway/proto/core"
+import core "github.com/yayashanzei/duckchat-gateway/proto/core"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
