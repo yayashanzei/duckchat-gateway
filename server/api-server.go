@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 
-	"github.com/duckchat/duckchat-gateway/proto/gateway"
+	"github.com/yayashanzei/duckchat-gateway/proto/gateway"
 
 	"github.com/golang/protobuf/proto"
 )
