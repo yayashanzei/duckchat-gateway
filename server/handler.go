@@ -11,10 +11,10 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/duckchat/duckchat-gateway/proto/core"
+	"github.com/yayashanzei/duckchat-gateway/proto/core"
 
-	_ "github.com/duckchat/duckchat-gateway/proto/client"
-	_ "github.com/duckchat/duckchat-gateway/proto/site"
+	_ "github.com/yayashanzei/duckchat-gateway/proto/client"
+	_ "github.com/yayashanzei/duckchat-gateway/proto/site"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
