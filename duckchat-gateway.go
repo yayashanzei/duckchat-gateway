@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/duckchat/duckchat-gateway/server"
+	"github.com/yayashanzei/duckchat-gateway/server"
 )
 
 func main() {
